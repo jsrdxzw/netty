@@ -10,6 +10,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 
 /**
+ * --add-opens java.base/jdk.internal.misc=ALL-UNNAMED
+ * -Dio.netty.tryReflectionSetAccessible=true
  * @author xuzhiwei
  * @date 2020-04-21
  */
@@ -33,6 +35,12 @@ public class NettyServer {
                         });
                     }
                 })
-                .bind(8000);
+                .bind(8000).addListener(future -> {
+                    if (future.isSuccess()) {
+                        System.out.println("端口绑定成功!");
+                    } else {
+                        System.out.println("端口绑定失败!");
+                    }
+                });
     }
 }
