@@ -12,6 +12,7 @@ import io.netty.handler.codec.string.StringDecoder;
 /**
  * --add-opens java.base/jdk.internal.misc=ALL-UNNAMED
  * -Dio.netty.tryReflectionSetAccessible=true
+ *
  * @author xuzhiwei
  * @date 2020-04-21
  */
@@ -29,18 +30,23 @@ public class NettyServer {
                         nioSocketChannel.pipeline().addLast(new StringDecoder());
                         nioSocketChannel.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                             @Override
-                            protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
+                            protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) {
                                 System.out.println(s);
                             }
                         });
                     }
-                })
-                .bind(8000).addListener(future -> {
-                    if (future.isSuccess()) {
-                        System.out.println("端口绑定成功!");
-                    } else {
-                        System.out.println("端口绑定失败!");
-                    }
                 });
+        bind(serverBootstrap, 1000);
+    }
+
+    private static void bind(ServerBootstrap serverBootstrap, int port) {
+        serverBootstrap.bind(port).addListener(future -> {
+            if (future.isSuccess()) {
+                System.out.println("端口[" + port + "]绑定成功!");
+            } else {
+                System.err.println("端口[" + port + "]绑定失败!");
+                bind(serverBootstrap, port + 1);
+            }
+        });
     }
 }
