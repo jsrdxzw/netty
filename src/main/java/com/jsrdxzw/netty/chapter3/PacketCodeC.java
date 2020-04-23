@@ -6,7 +6,8 @@ import io.netty.buffer.ByteBufAllocator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jsrdxzw.netty.chapter3.LoginRequestPacket.LOGIN_REQUEST;
+import static com.jsrdxzw.netty.im.Command.LOGIN_REQUEST;
+
 
 /**
  * @author xuzhiwei
@@ -18,6 +19,8 @@ public class PacketCodeC {
     private static final Map<Byte, Class<? extends Packet>> PACKET_TYPE_MAP;
     private static final Map<Byte, Serializer> SERIALIZER_MAP;
 
+    public static final PacketCodeC INSTANCE = new PacketCodeC();
+
     static {
         PACKET_TYPE_MAP = new HashMap<>();
         PACKET_TYPE_MAP.put(LOGIN_REQUEST, LoginRequestPacket.class);
@@ -27,9 +30,12 @@ public class PacketCodeC {
         SERIALIZER_MAP.put(serializer.getSerializerAlgorithm(), serializer);
     }
 
-    public ByteBuf encode(Packet packet) {
+    private PacketCodeC() {
+    }
+
+    public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
         // 1. 创建 ByteBuf 对象
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
         // 2. 序列化 Java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
@@ -79,7 +85,6 @@ public class PacketCodeC {
     }
 
     private Class<? extends Packet> getRequestType(byte command) {
-
         return PACKET_TYPE_MAP.get(command);
     }
 }

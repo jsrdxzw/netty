@@ -1,6 +1,9 @@
 package com.jsrdxzw.netty.chapter3;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import static com.jsrdxzw.netty.im.Command.LOGIN_REQUEST;
 
 /**
  * @author xuzhiwei
@@ -8,16 +11,18 @@ import lombok.*;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginRequestPacket extends Packet {
 
-    public static final Byte LOGIN_REQUEST = 1;
-
-    private Integer userId;
+    private String userId;
 
     private String username;
 
     private String password;
 
+    @JsonIgnore
     @Override
     public Byte getCommand() {
         return LOGIN_REQUEST;
